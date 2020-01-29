@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Stocks Dataviz</title>
+  </head>
+  <body>
+    <h1>My Stocks Dataviz</h1>
+    <div id="my-chart-container"></div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var dates = [1, 2, 3, 4, 100, 200, 300]
+        var prices = [10, 15, 13, 17, 21, 29, 31]
+        var series1 = {
+            x: dates,
+            y: prices,
+            mode: "lines+markers"
+        }
+        var data = [ series1 ]
+        var layout = {
+            title: "Stock Prices for Symbol MSFT"
+        }
+        Plotly.newPlot("my-chart-container", data, layout, {responsive: true})
+    </script>
+  </body>
+</html>
