@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Stocks Dataviz</title>
+  </head>
+  <body>
+    <h1>My Stocks Dataviz</h1>
+    <div id="my-chart-container"></div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // get the selected stock from the <select> element:
+        var symbol = "ACN"
+        console.log("STOCK SYMBOL:", symbol)
+        // compile the request URL
+        // see: https://www.alphavantage.co/documentation/#daily
+        var requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&apikey=abc123&symbol=" + symbol
+        console.log("REQUEST URL:", requestUrl)
+        // issue the HTTP request to the specified URL
+        // see: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+        fetch(requestUrl)
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            console.log("RESPONSE DATA:", responseData)
+            cachedResponse = responseData // store the response data in a variable that can be accessed after the request has been made (so you can debug via the console)
+            // determine latest date and closing price
+            // depends on the specific nested structure of our responseData
+            // for data structure, see: https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo
+            var tsd = responseData["Time Series (Daily)"]
+            //var daily_entries = Object.entries(tsd) // see: https://github.com/prof-rossetti/intro-to-web-dev/blob/master/notes/javascript/notes.md#object-methods
+            //console.log("LATEST ENTRY", daily_entries[0])
+            //var latestDate = daily_entries[0][0] // "2020-01-24"
+            //console.log("LATEST DATE:", latestDate)
+            //var latestClose = tsd[latestDate]["4. close"]
+            //console.log("LATEST CLOSING PRICE:", latestClose)
+            var dates = Object.keys(tsd) //> ["2020-01-27", "2020-01-24", "2020-01-23", etc.]
+            var allPrices = Object.values(tsd) // [{}, {}, {}]
+            var closingPrices = allPrices.map(function(obj){
+              return obj["4. close"]
+            }) // mapping, see: https://github.com/prof-rossetti/intro-to-web-dev/blob/master/notes/javascript/notes.md#iteration
+            //var dates = [1, 2, 3, 4, 100, 200, 300]
+            //var closingPrices = [10, 15, 13, 17, 21, 29, 31]
+            var series1 = {
+                x: dates,
+                y: closingPrices,
+                mode: "lines+markers"
+            }
+            var data = [ series1 ]
+            var layout = {
+                title: "Stock Prices for Symbol ACN"
+            }
+            Plotly.newPlot("my-chart-container", data, layout, {responsive: true})
+        })
+    </script>
+  </body>
+</html>
